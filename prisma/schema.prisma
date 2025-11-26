@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PipelineType {
+  COMPANIES
+  INFLUENCERS
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  activities ActivityLog[]
+  deals     Deal[]
+}
+
+model ActivityLog {
+  id             String       @id @default(cuid())
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String
+  date           DateTime
+  pipeline       PipelineType
+  coldCallsMade  Int          @default(0)
+  coldCallsAnswered Int       @default(0)
+  r1ViaCall      Int          @default(0)
+  coldDmsSent    Int          @default(0)
+  coldDmsReplied Int          @default(0)
+  emailsSent     Int          @default(0)
+  emailsOpened   Int          @default(0)
+  meetsViaDm     Int          @default(0)
+  meetsViaEmail  Int          @default(0)
+  meetings       Meeting[]
+  createdAt      DateTime     @default(now())
+}
+
+model Meeting {
+  id           String    @id @default(cuid())
+  activity     ActivityLog @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  activityId   String
+  stage        Int       // 1=R1, 2=R2, 3=R3
+  scheduled    Boolean   @default(false)
+  registered   Boolean   @default(false)
+  completed    Boolean   @default(false)
+  meetingDate  DateTime?
+  audio        AudioFile? @relation("MeetingAudio")
+}
+
+model Deal {
+  id             String       @id @default(cuid())
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String
+  pipeline       PipelineType
+  createdAt      DateTime     @default(now())
+  closedAt       DateTime?
+  verbalAgreement Boolean     @default(false)
+  value          Float? 
+}
+
+model AudioFile {
+  id         String   @id @default(cuid())
+  url        String
+  size       Int?
+  uploadedAt DateTime @default(now())
+  meeting    Meeting? @relation("MeetingAudio", fields: [meetingId], references: [id], onDelete: SetNull)
+  meetingId  String?  @unique
+  transcript Transcript?
+}
+
+model Transcript {
+  id         String    @id @default(cuid())
+  audio      AudioFile @relation(fields: [audioId], references: [id], onDelete: Cascade)
+  audioId    String    @unique
+  content    String
+  createdAt  DateTime  @default(now())
+  analysis   AIAnalysis?
+}
+
+model AIAnalysis {
+  id            String    @id @default(cuid())
+  transcript    Transcript @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+  transcriptId  String    @unique
+  summary       String?
+  sentiment     Float?    // -1..1
+  objections    Int?      
+  score         Int?      // 0..100
+  createdAt     DateTime  @default(now())
+}
