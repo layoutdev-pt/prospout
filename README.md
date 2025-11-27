@@ -157,4 +157,5 @@ Built by [Layout Agency](https://www.layoutagency.pt)
 
 ## 🤝 Support
 
-For issues or questions, contact: dev@layoutagency.pt
+For issues or questions, contact: layoutagency.pt@gmail.com
+
