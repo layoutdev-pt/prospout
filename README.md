@@ -19,7 +19,8 @@ A modern, real-time commercial operations dashboard built with Next.js 14, React
 - **Styling**: Tailwind CSS
 - **Icons**: Lucide React
 - **Charts**: Recharts
-- **Database**: Prisma + PostgreSQL (optional, uses in-memory storage by default)
+- **Database**: Firestore (Google Cloud) or Prisma + PostgreSQL (optional)
+- **AI**: Google AI (Gemini) for call analysis & insights
 - **Hosting**: Vercel-ready
 
 ## 📋 Prerequisites
@@ -37,21 +38,22 @@ cd prospout
 npm install
 ```
 
-### 2. Environment Setup
+### 2. Environment Setup (Optional - Google Cloud)
+
+For cloud data storage and AI features:
 
 ```bash
 cp .env.example .env.local
 ```
 
-Edit `.env.local` to add your database configuration (optional):
+Add your Google Cloud credentials:
 ```env
-# Database Configuration (Optional - uses in-memory storage if not configured)
-DATABASE_URL=postgresql://user:password@localhost:5432/prospout
-
-# Supabase (Optional)
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_FIREBASE_API_KEY=...
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=...
+NEXT_PUBLIC_GOOGLE_AI_API_KEY=...
 ```
+
+See [GOOGLE_CLOUD_SETUP.md](./GOOGLE_CLOUD_SETUP.md) for detailed instructions.
 
 ### 3. Run Locally
 
