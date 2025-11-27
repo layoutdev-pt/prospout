@@ -124,8 +124,8 @@ export const memory = {
   listActivities(opts?: { pipeline?: Pipeline; from?: string; to?: string }) {
     let res = activities.slice();
     if (opts?.pipeline) res = res.filter(r => r.pipeline === opts.pipeline);
-    if (opts?.from) res = res.filter(r => new Date(r.date) >= new Date(opts.from));
-    if (opts?.to) res = res.filter(r => new Date(r.date) <= new Date(opts.to));
+    if (opts?.from) res = res.filter(r => new Date(r.date) >= new Date(opts.from!));
+    if (opts?.to) res = res.filter(r => new Date(r.date) <= new Date(opts.to!));
     return res;
   },
   addDeal(d: Partial<Deal>) {
