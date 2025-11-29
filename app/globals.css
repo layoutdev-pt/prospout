@@ -24,6 +24,7 @@ html, body, #__next {
 
 .card:hover {
   @apply border-white/40 shadow-glow-cyan;
+  transform: translateY(-2px) scale(1.01);
 }
 
 /* Neon Glow Effects */
@@ -72,3 +73,31 @@ html, body, #__next {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-cyan-500/60;
 }
+.orb {
+  filter: blur(60px);
+  opacity: 0.28;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(24px, -24px, 0); }
+}
+
+.animate-float-slow { animation: float 14s ease-in-out infinite; }
+.animate-float-slower { animation: float 22s ease-in-out infinite; }
+
+/* Subtle moving grid */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.12;
+}
+
+@keyframes grid-pan {
+  0% { background-position: 0px 0px, 0px 0px; }
+  100% { background-position: 120px 0px, 0px 120px; }
+}
+
+.animate-grid-pan { animation: grid-pan 60s linear infinite; }

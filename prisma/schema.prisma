@@ -36,6 +36,15 @@ model ActivityLog {
   emailsOpened   Int          @default(0)
   meetsViaDm     Int          @default(0)
   meetsViaEmail  Int          @default(0)
+  
+  r1Completed    Int          @default(0)
+  r2Scheduled    Int          @default(0)
+  r2Completed    Int          @default(0)
+  r3Scheduled    Int          @default(0)
+  r3Completed    Int          @default(0)
+  verbalAgreements Int        @default(0)
+  dealsClosed    Int          @default(0)
+
   meetings       Meeting[]
   createdAt      DateTime     @default(now())
 }
@@ -91,4 +100,23 @@ model AIAnalysis {
   objections    Int?      
   score         Int?      // 0..100
   createdAt     DateTime  @default(now())
+}
+
+model Company {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  description String?
+  website     String?
+}
+
+model Influencer {
+  id               String   @id @default(cuid())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  name             String
+  instagram_handle String?  @unique
+  followers        Int?
+  email            String?  @unique
 }

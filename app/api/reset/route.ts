@@ -1,13 +1,34 @@
 import { NextResponse } from 'next/server';
-import memory from '../../../lib/memoryStore';
+import prospout from '../../../lib/prospoutService';
+import { cookies } from 'next/headers';
+import { createRouteClient } from '@/lib/supabase/server';
 
 export async function POST(req: Request) {
-  // reset in-memory stats
-  memory.reset();
+  const cookieStore = cookies();
+  const supabase = createRouteClient(cookieStore);
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+  }
+
+  // reset database
+  await prospout.reset();
   return NextResponse.json({ ok: true });
 }
 
 export async function GET(req: Request) {
-  // provide a quick status of memory sizes
-  return NextResponse.json({ activities: memory.activities.length, deals: memory.deals.length });
+  const cookieStore = cookies();
+  const supabase = createRouteClient(cookieStore);
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
+
+  if (!user) {
+    return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
+  }
+  // provide a quick status of database table sizes
+  const activities = await prospout.listActivities({ userId: user.id });
+  const deals = await prospout.listDeals({ userId: user.id });
+  return NextResponse.json({ activities: activities.length, deals: deals.length });
 }

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { BookOpen, ChevronDown } from 'lucide-react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const ITEMS: { q: string; a: string }[] = [
   { q: 'Cold calls made', a: 'Total number of outbound calls attempted.' },
@@ -21,6 +22,7 @@ const ITEMS: { q: string; a: string }[] = [
 
 export default function FAQ() {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   return (
     <div className="group relative sticky top-8">
@@ -28,7 +30,7 @@ export default function FAQ() {
       <div className="relative card bg-gradient-to-br from-slate-900/40 via-slate-800/20 to-slate-900/40 border border-emerald-500/20 rounded-xl p-6 hover:border-emerald-500/40 transition">
         <h3 className="text-lg font-bold text-emerald-300 mb-4 flex items-center gap-2">
           <BookOpen className="w-6 h-6" />
-          Definitions & FAQ
+          {t('Definitions & FAQ')}
         </h3>
         <div className="space-y-2">
           {ITEMS.map((item, i) => (
@@ -37,12 +39,12 @@ export default function FAQ() {
                 onClick={() => setExpanded(expanded === item.q ? null : item.q)}
                 className="w-full text-left px-4 py-3 bg-slate-800/30 hover:bg-slate-800/60 font-medium text-sm text-slate-300 flex justify-between items-center transition"
               >
-                {item.q}
+                {t(item.q)}
                 <ChevronDown className={`w-4 h-4 transition transform ${expanded === item.q ? 'rotate-180' : ''}`} />
               </button>
               {expanded === item.q && (
                 <div className="px-4 py-3 text-sm text-slate-400 bg-slate-900/30 border-t border-slate-700/50">
-                  {item.a}
+                  {t(item.a)}
                 </div>
               )}
             </div>

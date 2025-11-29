@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useState } from 'react';
+import { useTranslation } from '@/hooks/useTranslation';
 
 type Activity = any;
 
 export default function ActivityTable({ pipeline, from, to }: { pipeline?: string; from?: string; to?: string }) {
   const [activities, setActivities] = useState<Activity[]>([]);
+  const { t, language } = useTranslation();
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -13,18 +15,37 @@ export default function ActivityTable({ pipeline, from, to }: { pipeline?: strin
       if (from) params.set('from', from);
       if (to) params.set('to', to);
       const q = params.toString() ? `?${params.toString()}` : '';
-      const res = await fetch(`/api/activities${q}`);
-      const data = await res.json();
-      setActivities(data.activities || []);
+      try {
+        const res = await fetch(`/api/activities${q}`);
+        if (!res.ok) {
+          console.error('Failed to load activities', await res.text());
+          setActivities([]);
+          return;
+        }
+        const text = await res.text();
+        if (!text) {
+          setActivities([]);
+          return;
+        }
+        const data = JSON.parse(text);
+        setActivities(data.activities || []);
+      } catch (error) {
+        console.error('Failed to load activities', error);
+        setActivities([]);
+      }
     };
 
     fetchActivities();
-    const interval = setInterval(fetchActivities, 2000); // Refresh every 2 seconds
+    const interval = setInterval(fetchActivities, 10000);
     return () => clearInterval(interval);
   }, [pipeline, from, to]);
 
   if (activities.length === 0) {
-    return <div className="text-center text-slate-400 py-8 card bg-gradient-to-br from-slate-900/40 via-slate-800/20 to-slate-900/40 border border-slate-700/50 rounded-lg">No activities logged yet</div>;
+    return (
+      <div className="text-center text-slate-400 py-8 card bg-gradient-to-br from-slate-900/40 via-slate-800/20 to-slate-900/40 border border-slate-700/50 rounded-lg">
+        {t('No activities logged yet')}
+      </div>
+    );
   }
 
   return (
@@ -35,22 +56,22 @@ export default function ActivityTable({ pipeline, from, to }: { pipeline?: strin
           <table className="w-full">
             <thead>
               <tr className="bg-gradient-to-r from-slate-900/60 to-slate-800/40 border-b border-emerald-500/20">
-                <th className="px-6 py-4 text-left text-xs font-bold text-cyan-400 uppercase">Date</th>
-                <th className="px-6 py-4 text-center text-xs font-bold text-cyan-400 uppercase">Pipeline</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">Calls</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">Answered</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">R1 Meetings</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">R1 Completed</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-cyan-400 uppercase">{t('Date')}</th>
+                <th className="px-6 py-4 text-center text-xs font-bold text-cyan-400 uppercase">{t('Pipeline')}</th>
+                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">{t('Calls')}</th>
+                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">{t('Answered')}</th>
+                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">{t('R1 Meetings')}</th>
+                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">{t('R1 Completed')}</th>
                 <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">R2</th>
                 <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">R3</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">Verbal</th>
-                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">Deals</th>
+                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">{t('Verbal')}</th>
+                <th className="px-6 py-4 text-right text-xs font-bold text-cyan-400 uppercase">{t('Deals')}</th>
               </tr>
             </thead>
             <tbody>
               {activities.map((a, i) => (
                 <tr key={a.id} className={`border-b border-slate-700/30 ${i % 2 === 0 ? 'bg-slate-800/20' : 'bg-slate-900/20'} hover:bg-slate-800/50 transition`}>
-                  <td className="px-6 py-4 text-sm font-medium text-slate-300">{new Date(a.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</td>
+                  <td className="px-6 py-4 text-sm font-medium text-slate-300">{new Date(a.date).toLocaleDateString(language, { month: 'short', day: 'numeric', year: 'numeric' })}</td>
                   <td className="px-6 py-4 text-center text-sm">
                     <span className={`px-3 py-1 rounded-full text-xs font-semibold ${a.pipeline === 'COMPANIES' ? 'bg-cyan-500/30 text-cyan-300 border border-cyan-500/50' : 'bg-purple-500/30 text-purple-300 border border-purple-500/50'}`}>
                       {a.pipeline}

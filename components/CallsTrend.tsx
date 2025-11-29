@@ -9,32 +9,44 @@ export default function CallsTrend({ pipeline, from, to }: { pipeline?: string; 
   const [data, setData] = useState<Array<{ date: string; calls: number; r1: number; deals: number }>>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
+  const fetchData = async (signal?: AbortSignal) => {
     try {
       const params = new URLSearchParams();
       if (pipeline) params.set('pipeline', pipeline);
       if (from) params.set('from', from);
       if (to) params.set('to', to);
       const q = params.toString() ? `?${params.toString()}` : '';
-
-      const res = await fetch(`/api/analytics${q}`);
+      const res = await fetch(`/api/analytics${q}`, { signal });
       const json = await res.json();
       const ts = json.timeSeries || [];
 
-      // map to required format
       const out = ts.map((d: any) => ({ date: d.date, calls: d.calls || 0, r1: d.r1Completed || 0, deals: d.dealsClosed || 0 }));
       setData(out);
     } catch (err) {
-      console.error('CallsTrend fetch error', err);
+      const msg = String(err || '');
+      if (msg.includes('Abort') || msg.includes('aborted')) {
+      } else {
+        console.error('CallsTrend fetch error', err);
+      }
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData();
-    const t = setInterval(fetchData, 5000);
-    return () => clearInterval(t);
+    const ac = new AbortController();
+    fetchData(ac.signal);
+    let tickAc: AbortController | null = null;
+    const t = setInterval(() => {
+      if (tickAc) tickAc.abort();
+      tickAc = new AbortController();
+      fetchData(tickAc.signal);
+    }, 10000);
+    return () => {
+      ac.abort();
+      if (tickAc) tickAc.abort();
+      clearInterval(t);
+    };
   }, [pipeline, from, to]);
 
   if (loading) return <div className="p-4 text-slate-400">Loading trend…</div>;

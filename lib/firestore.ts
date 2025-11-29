@@ -11,7 +11,7 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-let db: Firestore;
+let db: Firestore | undefined = undefined;
 
 try {
   // Initialize Firebase only if config is complete
