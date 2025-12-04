@@ -24,12 +24,12 @@ export default function Dashboard() {
   const effectivePipeline = pipeline === 'ALL' ? undefined : pipeline;
 
   return (
-    <div className="flex bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900">
+    <div className="flex bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 min-h-[100svh] md:min-h-[100dvh] overflow-x-hidden">
       {/* Sidebar */}
       <Sidebar />
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto min-h-[100svh] md:min-h-[100dvh]">
         {/* Header */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-600/10 via-purple-600/10 to-cyan-600/10 pointer-events-none"></div>

@@ -11,7 +11,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className="bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white flex flex-col relative">
+      <body className="bg-gradient-to-br from-slate-950 via-blue-950 to-slate-900 text-white flex flex-col relative min-h-[100svh] md:min-h-[100dvh] overflow-x-hidden">
         <Script id="abort-error-silencer" strategy="beforeInteractive">
           {`(function(){
             function isAbortReason(r){
@@ -50,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="orb animate-float-slower absolute -bottom-32 -right-24 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-blue-600 to-pink-600" />
             <div className="absolute inset-0 bg-grid animate-grid-pan" />
           </div>
-          <main className="flex-1">{children}</main>
+          <main className="flex-1 min-h-[100svh] md:min-h-[100dvh] overflow-x-hidden">{children}</main>
           <SiteFooter />
         </AppProviders>
       </body>

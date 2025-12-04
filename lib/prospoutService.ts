@@ -133,11 +133,6 @@ export const prospout = {
   },
 
   async getAnalytics(opts?: { pipeline?: PipelineType; from?: string, to?: string, userId?: string}) {
-    if (!prisma) {
-        console.warn('Database not connected, cannot get analytics.');
-        return {};
-    }
-
     const activities = await this.listActivities(opts);
     const deals = await this.listDeals({ pipeline: opts?.pipeline, userId: opts?.userId });
 

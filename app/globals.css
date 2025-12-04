@@ -6,6 +6,17 @@ html, body, #__next {
   height: 100%;
 }
 
+/* Dynamic viewport height for mobile browsers */
+@supports (min-height: 100dvh) {
+  body { min-height: 100dvh; }
+}
+@supports (min-height: 100svh) {
+  body { min-height: 100svh; }
+}
+
+/* Prevent horizontal scroll on small viewports */
+html, body { overflow-x: hidden; }
+
 /* Vision UI Global Styles */
 :root {
   --color-dark: #0f172a;

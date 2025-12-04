@@ -32,27 +32,29 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    const s = (n: number) => Math.max(0, Math.floor(Number(n) || 0));
+    const timeCash = typeof avgTimeToCashDays === 'number' && isFinite(avgTimeToCashDays) && avgTimeToCashDays >= 0 ? avgTimeToCashDays : undefined;
     const payload = {
       userId: 'local-user',
       pipeline,
       date,
-      coldCallsMade,
-      coldCallsAnswered,
-      r1ViaCall,
-      coldDmsSent,
-      coldDmsReplied,
-      meetsViaDm,
-      emailsSent,
-      emailsOpened,
-      meetsViaEmail,
-      r1Completed,
-      r2Scheduled,
-      r2Completed,
-      r3Scheduled,
-      r3Completed,
-      verbalAgreements,
-      dealsClosed,
-      avgTimeToCashDays,
+      coldCallsMade: s(coldCallsMade),
+      coldCallsAnswered: s(coldCallsAnswered),
+      r1ViaCall: s(r1ViaCall),
+      coldDmsSent: s(coldDmsSent),
+      coldDmsReplied: s(coldDmsReplied),
+      meetsViaDm: s(meetsViaDm),
+      emailsSent: s(emailsSent),
+      emailsOpened: s(emailsOpened),
+      meetsViaEmail: s(meetsViaEmail),
+      r1Completed: s(r1Completed),
+      r2Scheduled: s(r2Scheduled),
+      r2Completed: s(r2Completed),
+      r3Scheduled: s(r3Scheduled),
+      r3Completed: s(r3Completed),
+      verbalAgreements: s(verbalAgreements),
+      dealsClosed: s(dealsClosed),
+      avgTimeToCashDays: timeCash,
     };
 
     const resp = await fetch('/api/activities', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
@@ -128,6 +130,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                       <label className={labelClass}>{t('Cold calls made')}</label>
                       <input
                         type="number"
+                        min={0}
                         value={coldCallsMade}
                         onChange={(e) => setColdCallsMade(Number(e.target.value))}
                         className={inputClass}
@@ -137,6 +140,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                       <label className={labelClass}>{t('Answered')}</label>
                       <input
                         type="number"
+                        min={0}
                         value={coldCallsAnswered}
                         onChange={(e) => setColdCallsAnswered(Number(e.target.value))}
                         className={inputClass}
@@ -149,6 +153,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                     <label className={labelClass}>{t('R1 via call')}</label>
                     <input
                       type="number"
+                      min={0}
                       value={r1ViaCall}
                       onChange={(e) => setR1ViaCall(Number(e.target.value))}
                       className={inputClass}
@@ -160,6 +165,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                     <label className={labelClass}>{t('R1 completed')}</label>
                     <input
                       type="number"
+                      min={0}
                       value={r1Completed}
                       onChange={(e) => setR1Completed(Number(e.target.value))}
                       className={inputClass}
@@ -182,6 +188,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                       <label className={labelClass}>{t('DMs sent')}</label>
                       <input
                         type="number"
+                        min={0}
                         value={coldDmsSent}
                         onChange={(e) => setColdDmsSent(Number(e.target.value))}
                         className={inputClass}
@@ -191,6 +198,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                       <label className={labelClass}>{t('DMs replied')}</label>
                       <input
                         type="number"
+                        min={0}
                         value={coldDmsReplied}
                         onChange={(e) => setColdDmsReplied(Number(e.target.value))}
                         className={inputClass}
@@ -203,6 +211,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                     <label className={labelClass}>{t('R1 via DM')}</label>
                     <input
                       type="number"
+                      min={0}
                       value={meetsViaDm}
                       onChange={(e) => setMeetsViaDm(Number(e.target.value))}
                       className={inputClass}
@@ -223,21 +232,23 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                   <>
                     <div>
                       <label className={labelClass}>{t('Emails sent')}</label>
-                      <input
-                        type="number"
-                        value={emailsSent}
-                        onChange={(e) => setEmailsSent(Number(e.target.value))}
-                        className={inputClass}
-                      />
+                    <input
+                      type="number"
+                      min={0}
+                      value={emailsSent}
+                      onChange={(e) => setEmailsSent(Number(e.target.value))}
+                      className={inputClass}
+                    />
                     </div>
                     <div>
                       <label className={labelClass}>{t('Opened')}</label>
-                      <input
-                        type="number"
-                        value={emailsOpened}
-                        onChange={(e) => setEmailsOpened(Number(e.target.value))}
-                        className={inputClass}
-                      />
+                    <input
+                      type="number"
+                      min={0}
+                      value={emailsOpened}
+                      onChange={(e) => setEmailsOpened(Number(e.target.value))}
+                      className={inputClass}
+                    />
                     </div>
                   </>
                 )}
@@ -246,6 +257,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                     <label className={labelClass}>{t('R1 via email')}</label>
                     <input
                       type="number"
+                      min={0}
                       value={meetsViaEmail}
                       onChange={(e) => setMeetsViaEmail(Number(e.target.value))}
                       className={inputClass}
@@ -268,6 +280,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                       <label className={labelClass}>{t('R2 scheduled')}</label>
                       <input
                         type="number"
+                        min={0}
                         value={r2Scheduled}
                         onChange={(e) => setR2Scheduled(Number(e.target.value))}
                         className={inputClass}
@@ -277,6 +290,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                       <label className={labelClass}>{t('R2 completed')}</label>
                       <input
                         type="number"
+                        min={0}
                         value={r2Completed}
                         onChange={(e) => setR2Completed(Number(e.target.value))}
                         className={inputClass}
@@ -290,6 +304,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                       <label className={labelClass}>{t('R3 scheduled')}</label>
                       <input
                         type="number"
+                        min={0}
                         value={r3Scheduled}
                         onChange={(e) => setR3Scheduled(Number(e.target.value))}
                         className={inputClass}
@@ -299,6 +314,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                       <label className={labelClass}>{t('R3 completed')}</label>
                       <input
                         type="number"
+                        min={0}
                         value={r3Completed}
                         onChange={(e) => setR3Completed(Number(e.target.value))}
                         className={inputClass}
@@ -321,6 +337,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                     <label className={labelClass}>{t('Verbal agreements')}</label>
                     <input
                       type="number"
+                      min={0}
                       value={verbalAgreements}
                       onChange={(e) => setVerbalAgreements(Number(e.target.value))}
                       className={inputClass}
@@ -332,6 +349,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                     <label className={labelClass}>{t('Deals closed')}</label>
                     <input
                       type="number"
+                      min={0}
                       value={dealsClosed}
                       onChange={(e) => setDealsClosed(Number(e.target.value))}
                       className={inputClass}
@@ -344,6 +362,7 @@ export default function ActivityLogger({ defaultPipeline }: { defaultPipeline?: 
                     <input
                       type="number"
                       step="0.1"
+                      min={0}
                       value={avgTimeToCashDays ?? ''}
                       onChange={(e) => setAvgTimeToCashDays(e.target.value ? Number(e.target.value) : undefined)}
                       className={inputClass}

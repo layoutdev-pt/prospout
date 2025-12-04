@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { LayoutDashboard, Zap, BarChart3, Settings, LogOut, UserCircle2, Brain, Camera, Building, User } from 'lucide-react';
+import { LayoutDashboard, Zap, BarChart3, Settings, LogOut, UserCircle2, Brain, Camera, Building, User, DollarSign, ListChecks } from 'lucide-react';
 import { getBrowserSupabaseClient } from '@/lib/supabase/client';
 import { useTranslation } from '@/hooks/useTranslation';
 
@@ -53,6 +53,8 @@ export default function Sidebar() {
     { label: t('Influencers'), href: '/pipelines/INFLUENCERS', icon: User },
     { label: 'AI Analytics', href: '/analysis', icon: Brain },
     { label: 'Content Planner', href: '/content', icon: Camera },
+    { label: 'Profit & Loss', href: '/finance', icon: DollarSign },
+    { label: 'Winning Tasks', href: '/winning-tasks', icon: ListChecks },
   ];
 
   const isActive = (href: string) => pathname === href;

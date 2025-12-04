@@ -43,6 +43,28 @@ export type Deal = {
   timeToCashDays?: number;
 };
 
+export type FinanceEntry = {
+  id: string;
+  userId: string;
+  date: string; // ISO
+  type: 'REVENUE' | 'EXPENSE';
+  category: 'FEES' | 'SOFTWARE' | 'STAFF' | 'OTHER';
+  amount: number;
+  description?: string;
+};
+
+export type WinningTask = {
+  id: string;
+  userId: string;
+  title: string;
+  description?: string;
+  reward?: string;
+  mediaUrl?: string;
+  createdAt: string;
+  completedAt?: string;
+  claimedAt?: string;
+};
+
 // Load from localStorage if available, otherwise start with empty arrays
 const loadActivities = (): Activity[] => {
   if (typeof window === 'undefined') return [];
@@ -64,9 +86,31 @@ const loadDeals = (): Deal[] => {
   }
 };
 
+const loadFinance = (): FinanceEntry[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = localStorage.getItem('prospout_finance');
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
+const loadWinning = (): WinningTask[] => {
+  if (typeof window === 'undefined') return [];
+  try {
+    const stored = localStorage.getItem('prospout_winning_tasks');
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+};
+
 // Initialize with localStorage data or empty
 let activities: Activity[] = typeof window !== 'undefined' ? loadActivities() : [];
 let deals: Deal[] = typeof window !== 'undefined' ? loadDeals() : [];
+let finance: FinanceEntry[] = typeof window !== 'undefined' ? loadFinance() : [];
+let winningTasks: WinningTask[] = typeof window !== 'undefined' ? loadWinning() : [];
 
 // Helper to persist to localStorage
 const saveActivities = () => {
@@ -78,6 +122,18 @@ const saveActivities = () => {
 const saveDeals = () => {
   if (typeof window !== 'undefined') {
     localStorage.setItem('prospout_deals', JSON.stringify(deals));
+  }
+};
+
+const saveFinance = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('prospout_finance', JSON.stringify(finance));
+  }
+};
+
+const saveWinning = () => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('prospout_winning_tasks', JSON.stringify(winningTasks));
   }
 };
 
@@ -149,11 +205,76 @@ export const memory = {
     if (opts?.pipeline) res = res.filter(r => r.pipeline === opts.pipeline);
     return res;
   },
+  addFinanceEntry(e: Partial<FinanceEntry>) {
+    const now = new Date().toISOString();
+    const item: FinanceEntry = {
+      id: (Math.random() + 1).toString(36).slice(2),
+      userId: e.userId || 'local-user',
+      date: e.date || now,
+      type: (e.type as any) || 'REVENUE',
+      category: (e.category as any) || 'FEES',
+      amount: e.amount || 0,
+      description: e.description,
+    };
+    finance.unshift(item);
+    saveFinance();
+    return item;
+  },
+  listFinance(opts?: { from?: string; to?: string; type?: 'REVENUE'|'EXPENSE'; category?: FinanceEntry['category'] }) {
+    let res = finance.slice();
+    if (opts?.type) res = res.filter(r => r.type === opts.type);
+    if (opts?.category) res = res.filter(r => r.category === opts.category);
+    if (opts?.from) res = res.filter(r => new Date(r.date) >= new Date(opts.from!));
+    if (opts?.to) res = res.filter(r => new Date(r.date) <= new Date(opts.to!));
+    return res;
+  },
+  addWinningTask(t: Partial<WinningTask>) {
+    const now = new Date().toISOString();
+    const item: WinningTask = {
+      id: (Math.random() + 1).toString(36).slice(2),
+      userId: t.userId || 'local-user',
+      title: t.title || 'Task',
+      description: t.description,
+      reward: t.reward,
+      mediaUrl: t.mediaUrl,
+      createdAt: t.createdAt || now,
+      completedAt: t.completedAt,
+      claimedAt: t.claimedAt,
+    };
+    winningTasks.unshift(item);
+    saveWinning();
+    return item;
+  },
+  updateWinningTask(id: string, patch: Partial<WinningTask>) {
+    const idx = winningTasks.findIndex(t => t.id === id);
+    if (idx >= 0) {
+      winningTasks[idx] = { ...winningTasks[idx], ...patch };
+      saveWinning();
+      return winningTasks[idx];
+    }
+    return null;
+  },
+  deleteWinningTask(id: string) {
+    const idx = winningTasks.findIndex(t => t.id === id);
+    if (idx >= 0) {
+      const [removed] = winningTasks.splice(idx, 1);
+      saveWinning();
+      return removed;
+    }
+    return null;
+  },
+  listWinningTasks() {
+    return winningTasks.slice();
+  },
   reset() {
     activities.length = 0;
     deals.length = 0;
+    finance.length = 0;
+    winningTasks.length = 0;
     saveActivities();
     saveDeals();
+    saveFinance();
+    saveWinning();
   }
 };
 
